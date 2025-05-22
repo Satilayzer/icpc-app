@@ -1,0 +1,33 @@
+﻿<link rel="stylesheet" href="style.css">
+
+<h2>Перегляд API ICPC</h2>
+
+<!-- GET маршрути -->
+<label for="apiRequests">Вибери GET маршрут:</label>
+<select id="apiRequests"></select>
+
+<div id="errorBox" class="error hidden"></div>
+<input type="text" id="queryParamsInput" placeholder="Фільтри (наприклад: institution=КПІ&language=Java)">
+<input type="text" id="paramInput" placeholder="Введіть параметри (через кому)">
+<button id="generateButton">Згенерувати таблицю</button>
+
+<!-- Таблиця для GET-запитів -->
+<table id="dataTable" style="display: none;">
+    <thead id="tableHead"></thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<!-- POST/PUT/DELETE -->
+<h2>Редагування / Додавання / Видалення</h2>
+
+<label for="editRequests">Вибери дію:</label>
+<select id="editRequests"></select>
+
+<textarea id="editDataInput" rows="5" cols="50" placeholder='Введіть JSON дані або ID для DELETE'></textarea>
+<button id="sendEditRequest">Виконати</button>
+
+<!-- Вивід відповіді для POST/PUT/DELETE -->
+<pre id="responseBox" style="display:none;"></pre>
+
+<script src="script.js"></script>
+<script src="editor.js"></script>
