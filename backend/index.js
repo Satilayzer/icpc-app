@@ -211,16 +211,16 @@ app.get('/submissions/filter', async (req, res) => {
     const { institution, education, language, verdict } = req.query;
 
     let query = `
-        SELECT 
-            s.*, 
+        SELECT
+            s.*,
             t.name AS team_name,
             l.name AS language_name,
             i.name AS institution_name,
             t.education_level
         FROM Submission s
-        JOIN Team t ON s.team_id = t.team_id
-        JOIN Language l ON s.language_id = l.language_id
-        JOIN Institution i ON t.institution_id = i.institution_id
+                 JOIN Team t ON s.team_id = t.team_id
+                 JOIN Language l ON s.language_id = l.language_id
+                 JOIN Institution i ON t.institution_id = i.institution_id
         WHERE 1=1
     `;
     const params = [];
@@ -255,6 +255,7 @@ app.get('/submissions/filter', async (req, res) => {
         res.status(500).send('Помилка сервера');
     }
 });
+
 
 // Статистика: кількість сабмішенів за мовами
 app.get('/stats/submissions-by-language', async (req, res) => {

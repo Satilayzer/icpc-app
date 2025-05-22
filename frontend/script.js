@@ -85,11 +85,12 @@ document.getElementById('generateButton').addEventListener('click', () => {
     }
 
     const rawParams = document.getElementById('paramInput').value.trim();
-    const queryParams = document.getElementById('queryParamsInput').value.trim();
+    const queryParamsRaw = document.getElementById('queryParamsInput').value.trim();
 
     const hasPathParams = route.includes(':');
     let fullRoute = route;
 
+    // Обработка path-параметров (типа /route/:id)
     if (hasPathParams) {
         if (!rawParams) {
             alert('Введіть параметри для маршруту (через кому)');
@@ -99,13 +100,26 @@ document.getElementById('generateButton').addEventListener('click', () => {
         fullRoute = fillRouteWithParams(route, paramValues);
     }
 
-    if (queryParams) {
-        fullRoute += (fullRoute.includes('?') ? '&' : '?') + queryParams;
+    // Обработка query-параметров (например ?institution=КПІ)
+    if (queryParamsRaw) {
+        const queryObject = {};
+
+        // Преобразуем строку в объект
+        queryParamsRaw.split('&').forEach(pair => {
+            const [key, value] = pair.split('=');
+            if (key && value !== undefined) {
+                queryObject[key.trim()] = value.trim();
+            }
+        });
+
+        const queryString = new URLSearchParams(queryObject).toString();
+        fullRoute += (fullRoute.includes('?') ? '&' : '?') + queryString;
     }
 
     console.log('Запит до:', fullRoute);
     loadDataForRoute(fullRoute);
 });
+
 
 // Очищення полів при зміні маршруту
 document.getElementById('apiRequests').addEventListener('change', () => {
