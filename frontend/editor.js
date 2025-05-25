@@ -5,7 +5,8 @@ const editRoutes = [
     { label: 'Видалити учасника (DELETE)', method: 'DELETE', url: '/participants/:id' },
     { label: 'Додати тренера (POST)', method: 'POST', url: '/coaches' },
     { label: 'Оновити тренера (PUT)', method: 'PUT', url: '/coaches/:id' },
-    { label: 'Видалити тренера (DELETE)', method: 'DELETE', url: '/coaches/:id' }
+    { label: 'Видалити тренера (DELETE)', method: 'DELETE', url: '/coaches/:id' },
+    { label: 'Присвоїти кульки (PUT)', method: 'PUT', url: '/kulki/award' },
 ];
 
 // Завантаження edit-маршрутів

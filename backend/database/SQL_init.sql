@@ -46,6 +46,28 @@ CREATE TABLE Submission (
                             submission_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE Kulki (
+                       problem_code TEXT PRIMARY KEY,  -- кожна задача лише раз отримає кульку
+                       team_id INT REFERENCES Team(team_id),
+                       submission_id INT REFERENCES Submission(submission_id),
+                       awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+INSERT INTO Kulki (problem_code, team_id, submission_id)
+SELECT s.problem_code, s.team_id, s.submission_id
+FROM Submission s
+         JOIN (
+    SELECT problem_code, MIN(submission_time) AS first_ok_time
+    FROM Submission
+    WHERE verdict = 'OK'
+    GROUP BY problem_code
+) AS first_ok
+              ON s.problem_code = first_ok.problem_code
+                  AND s.submission_time = first_ok.first_ok_time
+WHERE s.verdict = 'OK'
+  AND s.problem_code NOT IN (SELECT problem_code FROM Kulki);
+
 -- Прикладові дані
 INSERT INTO Institution(name) VALUES ('КПІ'), ('ЛНУ'), ('КНЕУ');
 

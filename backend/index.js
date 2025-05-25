@@ -254,8 +254,7 @@ app.get('/submissions/filter', async (req, res) => {
         console.error(err.message);
         res.status(500).send('Помилка сервера');
     }
-});
-
+}); 
 
 // Статистика: кількість сабмішенів за мовами
 app.get('/stats/submissions-by-language', async (req, res) => {
@@ -528,6 +527,76 @@ app.get('/languages', async (req, res) => {
     }
 });
 
+// Список кульок
+app.get('/kulki', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                k.problem_code,
+                k.team_id,
+                t.name AS team_name,
+                k.submission_id,
+                k.awarded_at
+            FROM Kulki k
+            JOIN Team t ON t.team_id = k.team_id
+            ORDER BY k.awarded_at;
+        `;
+        const { rows } = await db.query(query);
+        res.json(rows);
+    } catch (err) {
+        console.error('Помилка при отриманні кульок:', err);
+        res.status(500).json({ error: 'Помилка сервера' });
+    }
+});
+
+// Виявлення нових кульок
+app.get('/kulki/new', async (req, res) => {
+    try {
+        const query = `
+            SELECT s.problem_code, s.team_id, s.submission_id
+            FROM Submission s
+            JOIN (
+                SELECT problem_code, MIN(submission_time) AS first_ok_time
+                FROM Submission
+                WHERE verdict = 'OK'
+                GROUP BY problem_code
+            ) AS first_ok ON s.problem_code = first_ok.problem_code AND s.submission_time = first_ok.first_ok_time
+            WHERE s.verdict = 'OK'
+              AND s.problem_code NOT IN (SELECT problem_code FROM Kulki);
+        `;
+        const { rows } = await db.query(query);
+        res.json(rows);
+    } catch (err) {
+        console.error('Помилка при отриманні нових кульок:', err);
+        res.status(500).json({ error: 'Помилка сервера' });
+    }
+});
+
+// Присвоїти кульки
+app.post('/kulki/award', async (req, res) => {
+    try {
+        const query = `
+            INSERT INTO Kulki (problem_code, team_id, submission_id)
+            SELECT s.problem_code, s.team_id, s.submission_id
+            FROM Submission s
+            JOIN (
+                SELECT problem_code, MIN(submission_time) AS first_ok_time
+                FROM Submission
+                WHERE verdict = 'OK'
+                GROUP BY problem_code
+            ) AS first_ok ON s.problem_code = first_ok.problem_code AND s.submission_time = first_ok.first_ok_time
+            WHERE s.verdict = 'OK'
+              AND s.problem_code NOT IN (SELECT problem_code FROM Kulki);
+        `;
+        const result = await db.query(query);
+        res.json({ message: 'Кульки успішно присвоєно.' });
+    } catch (err) {
+        console.error('Помилка при присвоєнні кульок:', err);
+        res.status(500).json({ error: 'Помилка сервера' });
+    }
+});
+
+
 app.get('/routes', (req, res) => {
     res.json([
         { label: 'Команди', value: 'teams' },
@@ -549,6 +618,8 @@ app.get('/routes', (req, res) => {
         { label: 'Результати за рівнем освіти', value: '/results/education-level/:level' },
         { label: 'Фільтровані сабмішени', value: '/submissions/filter' },
         { label: 'Пошук команд ', value: '/teams/search' },
+        { label: 'Список кульок ', value: '/kulki' },
+        { label: 'Виявлення нових кульок ', value: '/kulki/new' },
     ]);
 });
 
