@@ -596,7 +596,7 @@ app.post('/kulki/award', async (req, res) => {
     }
 });
 
-
+// Список гет запитів
 app.get('/routes', (req, res) => {
     res.json([
         { label: 'Команди', value: 'teams' },
