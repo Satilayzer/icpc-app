@@ -1,0 +1,14 @@
+# Miro Smart Diagram CSV
+ID,Text,Type,Parent
+1,Institution,rectangle,
+2,Team,rectangle,1
+3,Participant,rectangle,2
+4,Coach,rectangle,2
+5,Submission,rectangle,2
+6,Language,rectangle,
+7,Kulki,rectangle,5
+8,Kulki,rectangle,2
+9,Kulki,rectangle,5
+10,Kulki,rectangle,7
+11,Kulki,rectangle,8
+12,Kulki,rectangle,9
